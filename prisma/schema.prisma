@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model Voo {
+  id        String   @id @default(uuid())
+  codigo    String   @unique               // O código do voo deve ser único e do tipo String
+  origemId  String
+  destinoId String
+  data      DateTime
+  origem    Endereco @relation("Origem", fields: [origemId], references: [id])
+  destino   Endereco @relation("Destino", fields: [destinoId], references: [id])
+  @@map("voos")  // O nome da tabela no banco de dados será "voos"
+}
+
+model Endereco {
+  id        String   @id @default(uuid())  // Gera um UUID automaticamente
+  cep       String
+  pais      String   // Certifique-se de que este campo exista
+  cidade    String   // Certifique-se de que este campo exista
+  estado    String   // Certifique-se de que este campo exista
+  rua       String   // Certifique-se de que este campo exista
+  numero    String   // Certifique-se de que este campo exista
+  voosOrigem    Voo[] @relation("Origem")
+  voosDestino   Voo[] @relation("Destino")
+
+  @@map("enderecos")  // O nome da tabela no banco de dados será "enderecos"
+
+}
